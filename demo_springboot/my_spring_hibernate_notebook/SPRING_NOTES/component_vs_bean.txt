@@ -1,0 +1,159 @@
+@bean VS @component:
+---------------------
+I'd summarize it saying a method with 
+@bean returns a customizable instance of spring bean, while 
+@component defines a class that may be later instanciated 
+by spring IoC engine when needed.
+
+@Component Preferable for component scanning and automatic wiring.
+
+
+@Component Preferable for component scanning and automatic wiring.
+
+When should you use @Bean?
+
+Sometimes automatic configuration is not an option. When? 
+Let's imagine that you want to wire components from 3rd-party libraries 
+(you don't have the source code so you can't annotate its classes with @Component), 
+so automatic configuration is not possible.
+
+The @Bean annotation returns an object that 
+spring should register as bean in application context. 
+The body of the method bears the logic responsible 
+for creating the instance.
+
+We cannot create a bean of a class using @Component, 
+if the class is outside spring container 
+whereas we can create a bean of a class using @Bean 
+even if the class is present outside the spring container.
+
+
+@Component and @Bean do two quite different things, and shouldn't be confused.
+
+@Component (and @Service and @Repository) are used to auto-detect
+ and auto-configure beans using classpath scanning. 
+ There's an implicit one-to-one mapping between the annotated class 
+ and the bean (i.e. one bean per class). 
+ Control of wiring is quite limited with this approach, 
+ since it's purely declarative.
+
+@Bean is used to explicitly declare a single bean, 
+rather than letting Spring do it automatically as above. 
+It decouples the declaration of the bean from the class definition, 
+and lets you create and configure beans exactly how you choose.
+
+
+when you need to decide which kind of beans you want to create 
+depending upon current states, you need to use @Bean.
+@Bean
+@Scope("prototype")
+public SomeService someService() {
+    switch (state) {
+    case 1:
+        return new Impl1();
+    case 2:
+        return new Impl2();
+    case 3:
+        return new Impl3();
+    default:
+        return new Impl();
+    }
+}
+However there is no way to do that with @Component.
+
+Both approaches aim to register target type in Spring container.
+The difference is that @Bean is applicable to methods, 
+whereas @Component is applicable to types.
+Therefore when you use @Bean annotation you control instance creation logic in method's body. 
+With @Component annotation you cannot.
+
+
+@Component auto detects and configures the beans using classpath scanning 
+whereas @Bean explicitly declares a single bean, 
+rather than letting Spring do it automatically.
+
+@Component does not decouple the declaration of the bean from the class definition where as 
+@Bean decouples the declaration of the bean from the class definition.
+
+@Component is a class level annotation 
+whereas @Bean is a method level annotation 
+and name of the method serves as the bean name.
+
+
+@Component need not to be used with the @Configuration annotation 
+where as @Bean annotation has to be used within the class 
+which is annotated with @Configuration.
+**Actually @Bean could be declared in non-configuration class. 
+It's known as lite mode
+
+@Component has different specializations 
+like @Controller, @Repository and @Service 
+whereas @Bean has no specializations.
+
+The difference is that @Bean is applicable to methods, 
+whereas @Component is applicable to types.
+
+----------------------------------------------------
+@Configuration
+class MyConfiguration{
+    @Bean
+    public User getUser() {
+        return new User();
+    }
+}
+
+class User{
+}    
+
+User user = applicationContext.getBean("getUser");
+
+------------------------- VS -----------------------
+@Component
+class User {
+}
+
+@Autowired
+User user;
+----------------------------------------------------
+ You can still use @Autowire to get the bean as you would do in case of @Component. 
+ @Bean just adds the Bean to the Spring Container just as would @Component does. 
+ The difference is as follows. 
+ 1. Using @Bean, you can add Third Party Classes to Spring Container. 
+ 2. Using @Bean, you can get the desired implementation of an interface at run-time
+ (Using factory design pattern) 
+
+-----------
+You can use @Bean to make an existing third-party class 
+available to your Spring framework application context.
+ 
+By using the @Bean annotation, you can wrap a third-party class 
+(it may not have @Component and it may not use Spring), as a Spring bean. 
+And then once it is wrapped using @Bean, it is as a singleton object 
+and available in your Spring framework application context. 
+You can now easily share/reuse this bean in your app 
+using dependency injection and @Autowired.
+
+You can use @Bean to make an existing third-party class available to your Spring framework application context.
+
+@Bean
+public ViewResolver viewResolver() {
+
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+
+    viewResolver.setPrefix("/WEB-INF/view/");
+    viewResolver.setSuffix(".jsp");
+
+    return viewResolver;
+}
+By using the @Bean annotation, you can wrap a third-party class (it may not have @Component and it may not use Spring), as a Spring bean. And then once it is wrapped using @Bean, it is as a singleton object and available in your Spring framework application context. You can now easily share/reuse this bean in your app using dependency injection and @Autowired.
+
+So think of the @Bean annotation is a wrapper/adapter for third-party classes. 
+You want to make the third-party classes available to your Spring framework application context.
+
+@Bean was created to avoid coupling Spring and your business rules in compile time. 
+It means you can reuse your business rules in other frameworks like PlayFramework or JEE.
+ you have total control on how create beans.
+
+
+
+ ===============================================================

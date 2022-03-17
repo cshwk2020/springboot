@@ -1,0 +1,26 @@
+
+@Repository
+@Repository’s job is to catch persistence-specific exceptions 
+and re-throw them as one of Spring’s unified unchecked exceptions.
+
+For this, Spring provides PersistenceExceptionTranslationPostProcessor, 
+which we are required to add in our application context
+(already included if we're using Spring Boot):
+
+<bean class=
+  "org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+This bean post processor adds an advisor 
+to any bean that’s annotated with @Repository.
+
+
+
+
+@Service
+We mark beans with @Service to indicate that they're holding the business logic. 
+Besides being used in the service layer, 
+there isn't any other special use for this annotation.
+
+@Component
+public @interface Service {
+}
